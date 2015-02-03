@@ -36,6 +36,22 @@ namespace Extant.Networking
             protocol = p;
         }
 
+        public Int32 Type
+        {
+            get
+            {
+                return type;
+            }
+        }
+
+        public ProtocolType Protocol
+        {
+            get
+            {
+                return protocol;
+            }
+        }
+
         /// <summary>
         /// Returns an Int32 that is read and removed from beginning of List of Bytes.
         /// </summary>
@@ -120,22 +136,6 @@ namespace Extant.Networking
                 arr.Add(EMPTY_BYTE);
             }
             return arr.ToArray();
-        }
-
-        public Int32 Type
-        {
-            get
-            {
-                return type;
-            }
-        }
-
-        public ProtocolType Protocol
-        {
-            get
-            {
-                return protocol;
-            }
         }
 
         /// <summary>

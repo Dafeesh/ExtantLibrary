@@ -1,6 +1,6 @@
 ﻿/* ThreadRun.cs
  * Author: Blake Scherschel
- * Usage: Educational and evaluation purposes only.
+ * Last Update: 2015/2/3
  * 
  * Purpose: Class used as a means of cleanly running a process on
  * a separate thread wrapped into one object.
@@ -28,17 +28,19 @@ namespace Extant
     //Base class used as a framework for classes that will run on a separate
     //thread. When inheritted, the inheritting class must override a RunLoop method
     //that will be called until requested to stop.
-    public abstract class ThreadRun
+    public abstract class ThreadRun : IDisposable
     {
         private static Int32 runningIDIterator = 0;
         private static object runningIDIterator_lock = new object();
 
         private Thread thisThread;
+        private object thisThread_lock = new object();
         private bool thisThread_killSwitch;
         private Int32 thisThread_pauseDelay;
         private Int32 runningID;
 
-        private List<Action> invoked = new List<Action>();
+        private List< ThreadTask<object> > invoked_ThreadTask = new List< ThreadTask<object> >();
+        private List<Action> invoked_Action = new List<Action>();
         private object invoked_lock = new object();
 
         private Exception unhandledException = null;
@@ -63,8 +65,13 @@ namespace Extant
 
             //Create Thread
             thisThread = new Thread(new ThreadStart(Run));
-            thisThread.Name = "<" + threadName + ":" + runningID.ToString() + ">";
+            thisThread.Name = "<" + threadName + "::" + runningID.ToString() + ">";
             thisThread_killSwitch = false;
+        }
+
+        ~ThreadRun()
+        {
+            Dispose(false);
         }
 
         /// <summary>
@@ -78,16 +85,26 @@ namespace Extant
                 try
                 {
                     //Run main loop.
-                    RunLoop();
+                    lock (thisThread_lock)
+                    {
+                        RunLoop();
+                    }
 
                     //Execute all invoked methods.
                     lock (invoked_lock)
                     {
-                        foreach (Action a in invoked)
+                        //ThreadTasks
+                        foreach (ThreadTask<object> a in invoked_ThreadTask)
+                        {
+                            a.Start();
+                        }
+                        invoked_ThreadTask.Clear();
+                        //Actions
+                        foreach (Action a in invoked_Action)
                         {
                             a();
                         }
-                        invoked.Clear();
+                        invoked_Action.Clear();
                     }
                 }
                 catch (Exception e)
@@ -112,14 +129,11 @@ namespace Extant
             //Begin method is not necessary.
             //throw new NotImplementedException();
         }
-        
+
         /// <summary>
         /// Non-halting function used as the loop call.
         /// </summary>
-        protected virtual void RunLoop()
-        {
-            throw new NotImplementedException();
-        }
+        protected abstract void RunLoop();
 
         /// <summary>
         /// Called when thread is finished, fails via instruction, or unhandled exception.
@@ -156,14 +170,48 @@ namespace Extant
         }
 
         /// <summary>
+        /// Instructs to stop the thread and to clean up.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Instructs to stop the thread and to clean up.
+        /// </summary>
+        /// <param name="isRuntimeDispose">True if this should be non-halting.</param>
+        protected void Dispose(Boolean isRuntimeDispose)
+        {
+            this.Stop();
+
+            if (!isRuntimeDispose)
+            {
+                thisThread.Join();
+            }
+        }
+
+        /// <summary>
+        /// Adds a Task to be executed during this object's main thread.
+        /// </summary>
+        /// <param name="a">ThreadTask to be run on this object's main thread.</param>
+        public void Invoke(ThreadTask<object> a)
+        {
+            lock (invoked_lock)
+            {
+                invoked_ThreadTask.Add(a);
+            }
+        }
+
+        /// <summary>
         /// Adds an Action to be executed during this object's main thread.
         /// </summary>
         /// <param name="a">Action to be run on this object's main thread.</param>
         public void Invoke(Action a)
         {
-            lock(invoked_lock)
+            lock (invoked_lock)
             {
-                invoked.Add(a);
+                invoked_Action.Add(a);
             }
         }
 
@@ -186,6 +234,18 @@ namespace Extant
             get
             {
                 return runningID;
+            }
+        }
+
+        /// <summary>
+        /// Lock to block execution until RunLoop is finished.
+        /// Prefer Invoke(..) over this approach.
+        /// </summary>
+        protected object ThreadLock
+        {
+            get
+            {
+                return thisThread_lock;
             }
         }
 

@@ -47,11 +47,6 @@ namespace Extant
             }
         }
 
-        public void SaveLog(string filename)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Log(LogType t, String s)
         {
             switch(t)
