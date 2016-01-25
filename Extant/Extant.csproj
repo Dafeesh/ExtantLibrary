@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{530167DB-59A3-4EA5-9EEC-1BA5958A5C5B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Extant</RootNamespace>
+    <AssemblyName>ExtantLibrary</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>reference\protobuf\Unity\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Collections\ListTable.cs" />
+    <Compile Include="Collections\CacheList.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\NumberExtentions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Logging\ByteRecord.cs" />
+    <Compile Include="Logging\DebugLogger.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\ILogging.cs" />
+    <Compile Include="Logging\LogItem.cs" />
+    <Compile Include="Net\ClientConnection.cs" />
+    <Compile Include="Net\Hosting\HostingConnection.cs" />
+    <Compile Include="Net\Hosting\IncomingConnection.cs" />
+    <Compile Include="Net\Hosting\NetHost.cs" />
+    <Compile Include="Net\INetConnection.cs" />
+    <Compile Include="Net\NetPacket.cs" />
+    <Compile Include="Net\NetworkProtocol.cs" />
+    <Compile Include="Net\TcpConnection.cs" />
+    <Compile Include="Net\UdpConnection.cs" />
+    <Compile Include="Util\TypeUtils.cs" />
+    <Compile Include="float2.cs" />
+    <Compile Include="int2.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Threading\LockValuePair.cs" />
+    <Compile Include="Threading\IThreadInvokable.cs" />
+    <Compile Include="Threading\ThreadJob.cs" />
+    <Compile Include="Threading\ThreadRun.cs" />
+    <Compile Include="Threading\ThreadInvokeAction.cs" />
+    <Compile Include="Threading\ThreadInvokeFunc.cs" />
+    <Compile Include="Threading\ThreadStopResult.cs" />
+    <Compile Include="Util\SimpleTimer.cs" />
+    <Compile Include="Util\TimeoutTimer.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
