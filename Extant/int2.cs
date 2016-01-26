@@ -56,5 +56,13 @@ namespace Extant
         {
             return new float2(a.X - b.X, a.Y - b.Y);
         }
+
+        public float Magnitude
+        {
+            get
+            {
+                return (float)Math.Sqrt(this.X * this.X + this.Y + this.Y);
+            }
+        }
     }
 }

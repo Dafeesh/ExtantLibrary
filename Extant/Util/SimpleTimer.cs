@@ -11,12 +11,21 @@ namespace Extant.Util
     {
         private TimeSpan _offset;
 
-        public SimpleTimer(TimeSpan startTime = default(TimeSpan))
+        public SimpleTimer()
+            : this(TimeSpan.Zero)
+        { }
+
+        public SimpleTimer(TimeSpan startTime)
         {
             this._offset = startTime;
         }
 
-        public static SimpleTimer StartNew(TimeSpan startTime = default(TimeSpan))
+        public static new SimpleTimer StartNew()
+        {
+            return StartNew(TimeSpan.Zero);
+        }
+
+        public static SimpleTimer StartNew(TimeSpan startTime)
         {
             SimpleTimer newTimer = new SimpleTimer(startTime);
             newTimer.Start();
@@ -24,7 +33,12 @@ namespace Extant.Util
             return newTimer;
         }
 
-        public new void Restart(TimeSpan startTime = default(TimeSpan))
+        public new void Restart()
+        {
+            Restart(TimeSpan.Zero);
+        }
+
+        public new void Restart(TimeSpan startTime)
         {
             this._offset = startTime;
             this.Reset();

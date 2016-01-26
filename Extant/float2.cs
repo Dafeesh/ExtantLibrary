@@ -60,6 +60,14 @@ namespace Extant
             return new float2(a.X - b.X, a.Y - b.Y);
         }
 
+        public float Magnitude
+        {
+            get
+            {
+                return (float)Math.Sqrt(this.X * this.X + this.Y + this.Y);
+            }
+        }
+
         public float DistanceTo(float2 otherPoint)
         {
             return (float)Math.Sqrt(Math.Pow(this.X - otherPoint.X, 2) + Math.Pow(this.Y - otherPoint.Y, 2));
