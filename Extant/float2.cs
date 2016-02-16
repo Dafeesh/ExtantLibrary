@@ -21,6 +21,17 @@ namespace Extant
             this.Y = y;
         }
 
+        public void Set(float x, float y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
+
+        public void Set(float2 other)
+        {
+            this.Set(other.X, other.Y);
+        }
+
         public override string ToString()
         {
             return "(" + X + ", " + Y + ")";
@@ -40,14 +51,19 @@ namespace Extant
 
         public static bool operator ==(float2 a, float2 b)
         {
-            return 
-                a.X.Equals(b.X) && 
+            return
+                a.X.Equals(b.X) &&
                 a.Y.Equals(b.Y);
         }
 
         public static bool operator !=(float2 a, float2 b)
         {
             return !(a == b);
+        }
+
+        public static float2 operator *(float2 a, float m)
+        {
+            return new float2(a.X * m, a.Y * m);
         }
 
         public static float2 operator +(float2 a, float2 b)
@@ -60,17 +76,28 @@ namespace Extant
             return new float2(a.X - b.X, a.Y - b.Y);
         }
 
-        public float Magnitude
+        public float Magnitude()
         {
-            get
-            {
-                return (float)Math.Sqrt(this.X * this.X + this.Y + this.Y);
-            }
+            return (float)Math.Sqrt(this.X * this.X + this.Y * this.Y);
+        }
+
+        public float2 Normal()
+        {
+            float mag = this.Magnitude();
+            return new float2(this.X / mag, this.Y / mag);
         }
 
         public float DistanceTo(float2 otherPoint)
         {
             return (float)Math.Sqrt(Math.Pow(this.X - otherPoint.X, 2) + Math.Pow(this.Y - otherPoint.Y, 2));
+        }
+
+        public float2 StepTowards(float2 other, float dist)
+        {
+            if (dist >= this.DistanceTo(other))
+                return other;
+            else
+                return this + ((other - this).Normal() * dist);
         }
 
         public bool WithinArea(float minX, float minY, float maxX, float maxY)

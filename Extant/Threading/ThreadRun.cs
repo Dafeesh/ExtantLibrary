@@ -5,18 +5,20 @@
  * Purpose: Class used as a means of cleanly running a process on
  * a separate thread wrapped into one object.
  * 
- *   The author just needs to inherit ThreadRun and override three functions:
+ *   The author just needs to inherit ThreadRun and override two functions:
  * Begin() -> Called when the object is instructed to begin running.
- * RunLoop() -> A non-halting function that is called between iterations of defined time periods.
  * Finish() -> Called when the thread has ended either by an exception or by instruction.
  * These functions all operate on the same thread so they are thread safe.
+ *   Then the auther will need to register Tick methods to be called.
+ *   Do this by calling RegisterTickCall() in the constructor to setup however
+ * many actions need to be called by any variable amount of times per second.
  * 
  * Notes:
  * -Avoid intensive processes in the constructor. Instead, use Begin.
  * -For functions that are not thread safe, use the public Invoke function.
  * -After instantiation of this class, use Start and Stop to dictate when it executes.
- * -If an object throws an UnhandledException then the Exception is saved in  the public 
- *  UnhandledException and the OnHandledException event is executed.
+ * -If an object throws an UnhandledException then the Exception is stored in the public 
+ *  UnhandledException and the thread is stopped.
  */
 
 using System;
