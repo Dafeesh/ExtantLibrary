@@ -21,17 +21,6 @@ namespace Extant
             this.Y = y;
         }
 
-        public void Set(float x, float y)
-        {
-            this.X = x;
-            this.Y = y;
-        }
-
-        public void Set(float2 other)
-        {
-            this.Set(other.X, other.Y);
-        }
-
         public override string ToString()
         {
             return "(" + X + ", " + Y + ")";
