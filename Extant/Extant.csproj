@@ -48,8 +48,8 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Logging\ByteRecord.cs" />
     <Compile Include="Logging\DebugLogger.cs" />
-    <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Logging\ILogging.cs" />
+    <Compile Include="Logging\IDebugLogger.cs" />
+    <Compile Include="Logging\IDebugLogging.cs" />
     <Compile Include="Logging\LogItem.cs" />
     <Compile Include="Net\ClientConnection.cs" />
     <Compile Include="Net\Hosting\HostingConnection.cs" />

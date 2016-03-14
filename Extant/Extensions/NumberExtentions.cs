@@ -11,5 +11,10 @@ namespace Extant.Extensions
         {
             return (value.CompareTo(default(T)) <= 0) ? default(T) : value;
         }
+        
+        public static int AsInt(this bool toggle)
+        {
+            return (toggle) ? 1 : 0;
+        }
     }
 }

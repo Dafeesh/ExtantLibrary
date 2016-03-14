@@ -2,9 +2,9 @@ using System;
 
 namespace Extant.Logging
 {
-    public interface ILogging
+    public interface IDebugLogging
     {
-        ILogger Log
+        IDebugLogger Log
         {
             get;
         }

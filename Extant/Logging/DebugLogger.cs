@@ -8,7 +8,7 @@ namespace Extant.Logging
     /// <summary>
     /// Thread-safe class for saving debugging logs.
     /// </summary>
-    public class DebugLogger : ILogger
+    public class DebugLogger : IDebugLogger
     {
         public event LoggerLoggedHandler Logged;
         public event LoggerLoggedHandler MessageLogged;
@@ -17,13 +17,12 @@ namespace Extant.Logging
 
         private String _sourceName;
         private bool _isPostingToConsole = false;
-
-        private DebugLogger _linkedLog = null;
+        private IDebugLogger _linkedLog = null;
 
         private List<LogItem> _log = new List<LogItem>();
         private object _log_lock = new object();
 
-        public DebugLogger(String sourceName, DebugLogger link = null)
+        public DebugLogger(String sourceName, IDebugLogger link = null)
         {
             this._sourceName = sourceName;
             this._linkedLog = link;
@@ -36,7 +35,7 @@ namespace Extant.Logging
             ErrorLogged = null;
         }
 
-        private void PostLogItem(LogItem li)
+        public void LogItem(LogItem li)
         {
             lock (_log_lock)
             {
@@ -45,17 +44,17 @@ namespace Extant.Logging
 
             switch (li.LogType)
             {
-                case (LogItem.ItemType.Message):
+                case (Logging.LogItem.ItemType.Message):
                     if (MessageLogged != null)
                         MessageLogged(li.ToString());
                     break;
 
-                case (LogItem.ItemType.Warning):
+                case (Logging.LogItem.ItemType.Warning):
                     if (WarningLogged != null)
                         WarningLogged(li.ToString());
                     break;
 
-                case (LogItem.ItemType.Error):
+                case (Logging.LogItem.ItemType.Error):
                     if (ErrorLogged != null)
                         ErrorLogged(li.ToString());
                     break;
@@ -65,7 +64,7 @@ namespace Extant.Logging
                 Logged(li.ToString());
 
             if (_linkedLog != null)
-                _linkedLog.PostLogItem(new LogItem(li, _linkedLog));
+                _linkedLog.LogItem(new LogItem(li, _linkedLog));
         }
 
         public void LogMessage(string s)
@@ -73,7 +72,7 @@ namespace Extant.Logging
             if (String.IsNullOrEmpty(s))
                 return;
 
-            PostLogItem(new LogItem(DateTime.Now, _sourceName, LogItem.ItemType.Message, s));
+            LogItem(new LogItem(DateTime.Now, _sourceName, Logging.LogItem.ItemType.Message, s));
         }
 
         public void LogWarning(string s)
@@ -81,7 +80,7 @@ namespace Extant.Logging
             if (String.IsNullOrEmpty(s))
                 return;
 
-            PostLogItem(new LogItem(DateTime.Now, _sourceName, LogItem.ItemType.Warning, s));
+            LogItem(new LogItem(DateTime.Now, _sourceName, Logging.LogItem.ItemType.Warning, s));
         }
 
         public void LogError(string s)
@@ -89,7 +88,7 @@ namespace Extant.Logging
             if (String.IsNullOrEmpty(s))
                 return;
 
-            PostLogItem(new LogItem(DateTime.Now, _sourceName, LogItem.ItemType.Error, s));
+            LogItem(new LogItem(DateTime.Now, _sourceName, Logging.LogItem.ItemType.Error, s));
         }
 
         public LogItem[] GetLines(int numLines)
@@ -102,7 +101,19 @@ namespace Extant.Logging
                 if (numLines > _log.Count)
                     numLines = _log.Count;
 
-                return _log.Take(numLines).ToArray();
+                return _log.Skip(_log.Count - numLines).Take(numLines).ToArray();
+            }
+        }
+
+        public IDebugLogger LinkedLogger
+        {
+            get
+            {
+                return _linkedLog;
+            }
+            set
+            {
+                _linkedLog = value;
             }
         }
 

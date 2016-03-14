@@ -19,7 +19,7 @@ namespace Extant.Logging
             this.Message = message;
         }
 
-        public LogItem(LogItem item, DebugLogger sourceParent)
+        public LogItem(LogItem item, IDebugLogger sourceParent)
             : this(item.Time, item.Source, item.LogType, item.Message)
         {
             this.Source = sourceParent.SourceName + "-" + this.Source;

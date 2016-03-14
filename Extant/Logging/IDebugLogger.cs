@@ -7,13 +7,14 @@ namespace Extant.Logging
 {
     public delegate void LoggerLoggedHandler(string str);
 
-    public interface ILogger
+    public interface IDebugLogger
     {
         event LoggerLoggedHandler Logged;
         event LoggerLoggedHandler MessageLogged;
         event LoggerLoggedHandler WarningLogged;
         event LoggerLoggedHandler ErrorLogged;
 
+        void LogItem(LogItem item);
         void LogMessage(string str);
         void LogWarning(string str);
         void LogError(string str);
@@ -22,5 +23,6 @@ namespace Extant.Logging
 
         bool IsPostingToConsole { get; set; }
         string SourceName { get; }
+        IDebugLogger LinkedLogger { get; set; }
     }
 }
