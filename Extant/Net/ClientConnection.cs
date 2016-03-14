@@ -8,20 +8,28 @@ using System.Threading;
 
 using Extant.Util;
 using Extant.Threading;
+using Extant.Logging;
 
 namespace Extant.Net
 {
-    public class ClientConnection : INetConnection
+    public class ClientConnection : INetConnection, IDebugLogging
     {
         private TcpConnection _tcpConnection;
         private UdpConnection _udpConnection;
 
         private SimpleTimer _lastPacketTimer;
 
+        private DebugLogger _log;
+
         private ClientConnection(TcpConnection tcpCon, UdpConnection udpCon)
         {
             this._tcpConnection = tcpCon;
             this._udpConnection = udpCon;
+
+            this._log = new DebugLogger("CliCon");
+            this._tcpConnection.Log.LinkedLogger = this._log;
+            this._udpConnection.Log.LinkedLogger = this._log;
+            this._log.IsPostingToConsole = true;
 
             this._lastPacketTimer = SimpleTimer.StartNew();
         }
@@ -99,11 +107,19 @@ namespace Extant.Net
             }
         }
 
+        public IDebugLogger Log
+        {
+            get
+            {
+                return _log;
+            }
+        }
+
         ////////////////////////////////////////////////
 
         public class ConnectionProcess
         {
-            public ClientConnection ClientConnection { get; private set; } 
+            public ClientConnection ClientConnection { get; private set; }
             public Step ConnectionStep { get; private set; }
             public bool IsDone { get; private set; }
 
@@ -141,7 +157,7 @@ namespace Extant.Net
             {
                 _thread.Abort();
             }
-            
+
             private void _Run()
             {
                 TcpClient tcpClient = new TcpClient();

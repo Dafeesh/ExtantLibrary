@@ -37,16 +37,9 @@ namespace Extant.Net
 
         public static T GetFromBuffer<T>(byte[] buffer, int id) where T : NetPacket
         {
-            try
+            using (MemoryStream ms = new MemoryStream(buffer))
             {
-                using (MemoryStream ms = new MemoryStream(buffer))
-                {
-                    return Serializer.DeserializeWithLengthPrefix<T>(ms, PrefixStyle.Fixed32, id);
-                }
-            }
-            catch (Exception) //EndOfStreamException)
-            {
-                return default(T);
+                return Serializer.DeserializeWithLengthPrefix<T>(ms, PrefixStyle.Fixed32, id);
             }
         }
 

@@ -9,7 +9,7 @@ using Extant.Logging;
 
 namespace Extant.Net.Hosting
 {
-    public class NetHost : ThreadRun , ILogging
+    public class NetHost : ThreadRun , IDebugLogging
     {
         private TcpListener _tcpListener;
         private LockValuePair<UdpClient> _udpListener;
@@ -180,6 +180,7 @@ namespace Extant.Net.Hosting
             lock (_newConnections.Lock)
             {
                 HostingConnection newHostingConnection = new HostingConnection(incomingCon.TcpConnection, _udpListener, remoteUdpEndPoint);
+                newHostingConnection.Log.LinkedLogger = this._log;
                 _activeConnections.Add(newHostingConnection);
                 _newConnections.Value.Enqueue(newHostingConnection);
             }
@@ -243,7 +244,7 @@ namespace Extant.Net.Hosting
             }
         }
 
-        public ILogger Log
+        public IDebugLogger Log
         {
             get
             {

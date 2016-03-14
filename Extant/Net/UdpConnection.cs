@@ -8,7 +8,7 @@ using Extant.Logging;
 
 namespace Extant.Net
 {
-    public class UdpConnection : ILogging
+    public class UdpConnection : IDebugLogging
     {
         private UdpClient _udpClient;
         private IPEndPoint _remoteEndPoint;
@@ -84,6 +84,7 @@ namespace Extant.Net
                 catch (ObjectDisposedException)
                 {
                     Log.LogMessage("ReceiveCallback, disposed.");
+                    this.Close();
                 }
                 catch (Exception e)
                 {
@@ -203,7 +204,7 @@ namespace Extant.Net
             }
         }
 
-        public ILogger Log
+        public IDebugLogger Log
         {
             get
             {

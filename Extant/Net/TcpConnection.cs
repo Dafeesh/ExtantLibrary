@@ -9,7 +9,7 @@ using Extant.Logging;
 
 namespace Extant.Net
 {
-    public class TcpConnection : ILogging
+    public class TcpConnection : IDebugLogging
     {
         private TcpClient _tcpClient;
 
@@ -95,6 +95,7 @@ namespace Extant.Net
                 catch (ObjectDisposedException)
                 {
                     Log.LogMessage("ReceiveCallback, disposed.");
+                    this.Close();
                 }
                 catch (Exception e)
                 {
@@ -121,9 +122,7 @@ namespace Extant.Net
 
                     NetPacket packet = _packetDecryptor(packetId, buffer.Skip(1).Take(packetLength - 1).ToArray());
                     if (packet == null)
-                    {
                         throw new FormatException("Error while interpretting packet from receivebuffer.");
-                    }
 
                     bytesRead += packetLength;
 
@@ -141,7 +140,7 @@ namespace Extant.Net
                 }
             }
         }
-        
+
         /// <summary>
         /// Returns the oldest packet in the queue.
         /// If no packets available then this returns null.
@@ -217,7 +216,7 @@ namespace Extant.Net
             }
         }
 
-        public ILogger Log
+        public IDebugLogger Log
         {
             get
             {

@@ -6,6 +6,7 @@ using System.Net;
 
 using Extant.Util;
 using Extant.Threading;
+using Extant.Logging;
 
 namespace Extant.Net.Hosting
 {
@@ -18,7 +19,8 @@ namespace Extant.Net.Hosting
         private Queue<NetPacket> _udpPackets = new Queue<NetPacket>();
         private object _udpPackets_lock = new object();
 
-        private SimpleTimer _lastPacketTimer;
+        private SimpleTimer _lastPacketTimer = SimpleTimer.StartNew();
+        DebugLogger _log;
 
         public HostingConnection(
             TcpConnection tcpCon,
@@ -26,11 +28,12 @@ namespace Extant.Net.Hosting
             IPEndPoint remoteUdpEndPoint
             )
         {
+            this._log = new DebugLogger("HostCon");
+
             this._tcpConnection = tcpCon;
+            this._tcpConnection.Log.LinkedLogger = this._log;
             this._udpClient = udpClient;
             this._remoteUdpEndPoint = remoteUdpEndPoint;
-
-            this._lastPacketTimer = SimpleTimer.StartNew();
         }
 
         ////////////////////////////////////////////////
@@ -138,6 +141,14 @@ namespace Extant.Net.Hosting
             get
             {
                 return _lastPacketTimer.ElapsedMilliseconds;
+            }
+        }
+
+        public IDebugLogger Log
+        {
+            get
+            {
+                return _log;
             }
         }
     }

@@ -10,7 +10,7 @@ namespace Extant.Net
     /// <summary>
     /// A network connection communicating with NetPackets.
     /// </summary>
-    public interface INetConnection
+    public interface INetConnection : IDebugLogging
     {
         void Send(NetPacket packet, NetworkProtocol protocol);
         NetPacket Receive();

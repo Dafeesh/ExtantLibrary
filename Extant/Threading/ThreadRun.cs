@@ -270,5 +270,13 @@ namespace Extant.Threading
                 return _thisThread.Value.ManagedThreadId;
             }
         }
+
+        public Exception UnhandledException
+        {
+            get
+            {
+                return _unhandledException;
+            }
+        }
     }
 }
