@@ -29,6 +29,8 @@ namespace Extant.Net.Hosting
             if (packetDecryptor == null || localEndPoint == null)
                 throw new ArgumentNullException();
 
+            this._tcpListener = new TcpListener(localEndPoint);
+            this._udpListener = new LockValuePair<UdpClient>(new UdpClient(localEndPoint));
             this._packetDecryptor = packetDecryptor;
             this._localEndPoint = localEndPoint;
             this._log = new DebugLogger("NetHost", parentLogger);
@@ -38,9 +40,6 @@ namespace Extant.Net.Hosting
 
         protected override void OnBegin()
         {
-            _tcpListener = new TcpListener(_localEndPoint);
-            _udpListener = new LockValuePair<UdpClient>(new UdpClient(_localEndPoint));
-
             _tcpListener.Start();
         }
 

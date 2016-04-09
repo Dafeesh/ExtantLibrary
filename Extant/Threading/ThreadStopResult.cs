@@ -8,6 +8,7 @@ namespace Extant.Threading
     public enum ThreadStopType
     {
         Success,
+        HandledFailure,
         UnhandledException
     }
 
