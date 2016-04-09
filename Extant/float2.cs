@@ -9,6 +9,7 @@ namespace Extant
     public struct float2
     {
         public static readonly float2 Zero = new float2(0, 0);
+        public static readonly float2 Epsilon = new float2(float.Epsilon, float.Epsilon);
 
         [ProtoMember(1)]
         public float X;
@@ -55,6 +56,11 @@ namespace Extant
             return new float2(a.X * m, a.Y * m);
         }
 
+        public static float2 operator /(float2 a, float m)
+        {
+            return new float2(a.X / m, a.Y / m);
+        }
+
         public static float2 operator +(float2 a, float2 b)
         {
             return new float2(a.X + b.X, a.Y + b.Y);
@@ -95,25 +101,21 @@ namespace Extant
                      this.Y < minY || this.Y > maxY);
         }
 
-        //public float2 AddEpsilon(float2 awayFrom)
-        //{
-        //    const float epsilon = 0.0001f;
-        //    float xDiff = this.X - awayFrom.X;
-        //    float yDiff = this.Y - awayFrom.Y;
+        public float2 Scale(float m)
+        {
+            return new float2(this.X * m, this.Y * m);
+        }
 
-        //    float2 newFP = this;
-
-        //    if (xDiff < 0)
-        //        newFP.X -= epsilon;
-        //    else if (xDiff > 0)
-        //        newFP.X += epsilon;
-
-        //    if (yDiff < 0)
-        //        newFP.Y -= epsilon;
-        //    else if (yDiff > 0)
-        //        newFP.Y += epsilon;
-
-        //    return newFP;
-        //}
+        public float2 Scale(float2 m2)
+        {
+            return new float2(this.X * m2.X, this.Y * m2.Y);
+        }
+        
+        public float2 Rotate(float degrees)
+        {
+            float sin = (float)Math.Sin(degrees * (Math.PI / 180f));
+            float cos = (float)Math.Cos(degrees * (Math.PI / 180f));
+            return new float2((cos * this.X) - (sin * this.Y), (sin * this.X) + (cos * this.Y));
+        }
     }
 }
