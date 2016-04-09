@@ -14,5 +14,13 @@ namespace Extant.Extensions
             else
                 dictionary.Add(key, value);
         }
+
+        public static void SetOrAddAll<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, IEnumerable<KeyValuePair<TKey, TValue>> values)
+        {
+            foreach (var kvp in values)
+            {
+                dictionary.SetOrAdd(kvp.Key, kvp.Value);
+            }
+        }
     }
 }
