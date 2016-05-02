@@ -81,6 +81,11 @@ namespace Extant
             float mag = this.Magnitude();
             return new float2(this.X / mag, this.Y / mag);
         }
+        
+        public float2 Inverse()
+        {
+            return new float2(-this.X, -this.Y);
+        }
 
         public float DistanceTo(float2 otherPoint)
         {
@@ -110,12 +115,17 @@ namespace Extant
         {
             return new float2(this.X * m2.X, this.Y * m2.Y);
         }
-        
+
         public float2 Rotate(float degrees)
         {
             float sin = (float)Math.Sin(degrees * (Math.PI / 180f));
             float cos = (float)Math.Cos(degrees * (Math.PI / 180f));
             return new float2((cos * this.X) - (sin * this.Y), (sin * this.X) + (cos * this.Y));
+        }
+
+        public float ToDegrees()
+        {
+            return (float)(Math.Atan2(this.Y, this.X) * 180.0f / Math.PI);
         }
 
         public static float2 FromDegrees(float degrees)
