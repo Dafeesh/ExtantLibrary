@@ -117,5 +117,11 @@ namespace Extant
             float cos = (float)Math.Cos(degrees * (Math.PI / 180f));
             return new float2((cos * this.X) - (sin * this.Y), (sin * this.X) + (cos * this.Y));
         }
+
+        public static float2 FromDegrees(float degrees)
+        {
+            float angle = (float)Math.PI * degrees / 180.0f;
+            return new float2((float)Math.Cos(angle), (float)Math.Sin(angle));
+        }
     }
 }
