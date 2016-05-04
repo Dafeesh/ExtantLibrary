@@ -61,7 +61,7 @@
     <Compile Include="Net\TcpConnection.cs" />
     <Compile Include="Net\UdpConnection.cs" />
     <Compile Include="Util\MathHelp.cs" />
-    <Compile Include="Util\TypeUtils.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="float2.cs" />
     <Compile Include="int2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Extant.Util
+namespace Extant.Extensions
 {
-    public static class TypeUtils
+    public static class TypeExtensions
     {
         /// <summary>
         /// Unsubscribes all Delegates referencing -obj- in static -type-'s list of static events.
