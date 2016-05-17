@@ -55,9 +55,9 @@
     <Compile Include="Threading\ThreadRunTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Extant\Extant.csproj">
+    <ProjectReference Include="..\Extant_Core\Extant_Core.csproj">
       <Project>{530167db-59a3-4ea5-9eec-1ba5958a5c5b}</Project>
-      <Name>Extant</Name>
+      <Name>Extant_Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

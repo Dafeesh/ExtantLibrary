@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Extant</RootNamespace>
-    <AssemblyName>ExtantLibrary</AssemblyName>
+    <AssemblyName>Extant_Core</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
