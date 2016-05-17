@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Extant</RootNamespace>
-    <AssemblyName>Extant_Core</AssemblyName>
+    <AssemblyName>Extant</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
@@ -42,6 +42,9 @@
   <ItemGroup>
     <Compile Include="Collections\ListTable.cs" />
     <Compile Include="Collections\CacheList.cs" />
+    <Compile Include="Event\ISharedEventSubscriber.cs" />
+    <Compile Include="Event\SharedEvent.cs" />
+    <Compile Include="Event\WeakReference.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\NumberExtentions.cs" />
@@ -51,15 +54,6 @@
     <Compile Include="Logging\IDebugLogger.cs" />
     <Compile Include="Logging\IDebugLogging.cs" />
     <Compile Include="Logging\LogItem.cs" />
-    <Compile Include="Net\ClientConnection.cs" />
-    <Compile Include="Net\Hosting\HostingConnection.cs" />
-    <Compile Include="Net\Hosting\IncomingConnection.cs" />
-    <Compile Include="Net\Hosting\NetHost.cs" />
-    <Compile Include="Net\INetConnection.cs" />
-    <Compile Include="Net\NetPacket.cs" />
-    <Compile Include="Net\NetworkProtocol.cs" />
-    <Compile Include="Net\TcpConnection.cs" />
-    <Compile Include="Net\UdpConnection.cs" />
     <Compile Include="Util\MathHelp.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="float2.cs" />

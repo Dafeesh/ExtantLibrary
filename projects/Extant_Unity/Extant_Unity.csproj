@@ -7,7 +7,7 @@
     <ProjectGuid>{04068741-5919-4DE5-A9FE-0BCB475D61EE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Exant.Unity</RootNamespace>
+    <RootNamespace>Extant.Unity</RootNamespace>
     <AssemblyName>Extant_Unity</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -37,15 +37,29 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UnityEditor">
+      <HintPath>imported_Unity\UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.Graphs">
+      <HintPath>imported_Unity\UnityEditor.Graphs.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>imported_Unity\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Component\ComponentBase.cs" />
+    <Compile Include="Component\SingletonComponent.cs" />
+    <Compile Include="Float2Conversions.cs" />
+    <Compile Include="TransformExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VectorConversions.cs" />
+    <Compile Include="VectorExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Extant_Core\Extant_Core.csproj">
+    <ProjectReference Include="..\Extant\Extant.csproj">
       <Project>{530167db-59a3-4ea5-9eec-1ba5958a5c5b}</Project>
-      <Name>Extant_Core</Name>
+      <Name>Extant</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
