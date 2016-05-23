@@ -27,7 +27,7 @@ namespace Extant.Net.Hosting
             : base("NetHost")
         {
             if (packetDecryptor == null || localEndPoint == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("Decryptor and local end point must not be null.");
 
             this._tcpListener = new TcpListener(localEndPoint);
             this._udpListener = new LockValuePair<UdpClient>(new UdpClient(localEndPoint));
