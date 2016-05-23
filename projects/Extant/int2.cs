@@ -1,26 +1,27 @@
 using System;
+using System.Xml.Serialization;
 
 using ProtoBuf;
 
 namespace Extant
 {
-    [ProtoContract]
+    [XmlRoot("Int2"), ProtoContract]
     public struct int2
     {
-        [ProtoMember(1)]
-        public int X;
-        [ProtoMember(2)]
-        public int Y;
+        [XmlElement("X"), ProtoMember(1)]
+        public int x;
+        [XmlElement("Y"), ProtoMember(2)]
+        public int y;
 
         public int2(int x = 0, int y = 0)
         {
-            this.X = x;
-            this.Y = y;
+            this.x = x;
+            this.y = y;
         }
 
         public override string ToString()
         {
-            return "(" + X + ", " + Y + ")";
+            return "(" + x + ", " + y + ")";
         }
 
         public override bool Equals(object other)
@@ -32,14 +33,14 @@ namespace Extant
 
         public override int GetHashCode()
         {
-            return X.GetHashCode() ^ Y.GetHashCode();
+            return x.GetHashCode() ^ y.GetHashCode();
         }
 
         public static bool operator ==(int2 a, int2 b)
         {
             return
-                a.X.Equals(b.X) &&
-                a.Y.Equals(b.Y);
+                a.x.Equals(b.x) &&
+                a.y.Equals(b.y);
         }
 
         public static bool operator !=(int2 a, int2 b)
@@ -47,21 +48,26 @@ namespace Extant
             return !(a == b);
         }
 
-        public static float2 operator +(int2 a, int2 b)
+        public static int2 operator +(int2 a, int2 b)
         {
-            return new float2(a.X + b.X, a.Y + b.Y);
+            return new int2(a.x + b.x, a.y + b.y);
         }
 
-        public static float2 operator -(int2 a, int2 b)
+        public static int2 operator -(int2 a, int2 b)
         {
-            return new float2(a.X - b.X, a.Y - b.Y);
+            return new int2(a.x - b.x, a.y - b.y);
+        }
+
+        public static explicit operator float2(int2 i)
+        {
+            return new float2(i.x, i.y);
         }
 
         public float Magnitude
         {
             get
             {
-                return (float)Math.Sqrt(this.X * this.X + this.Y + this.Y);
+                return (float)Math.Sqrt(this.x * this.x + this.y + this.y);
             }
         }
     }

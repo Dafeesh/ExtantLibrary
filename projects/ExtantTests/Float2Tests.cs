@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 using UnityEngine;
 using Extant;
 using Extant.Unity;
+using Extant.Util;
 
 namespace ExtantTests
 {
@@ -30,6 +32,26 @@ namespace ExtantTests
 
             float step11to00by2 = one_one.StepTowards(zero2, 2f).Magnitude();
             Assert.IsTrue(step11to00by2 < float.Epsilon, "(1,1) step 2 == " + step11to00by2);
+        }
+
+        [TestMethod]
+        public void Float2_XmlSerialization()
+        {
+            float2 single = new float2(2.2f, -9.9f);
+            float2[] arr =
+            {
+                new float2(1f, 1f),
+                new float2(-1f, -1f),
+                new float2(0f, 0f)
+            };
+
+            string singleXmlString = XmlBuilder.BuildString(single);
+            float2 parsedXmlObject = XmlBuilder.ParseString<float2>(singleXmlString);
+            Assert.IsTrue(single.Equals(parsedXmlObject), "Reserialized single does not equal original.");
+
+            string arrXmlString = XmlBuilder.BuildString(arr);
+            float2[] parsedXmlArr = XmlBuilder.ParseString<float2[]>(arrXmlString);
+            Assert.IsTrue(Enumerable.SequenceEqual(arr, parsedXmlArr), "Reserialized array does not equal original.");
         }
     }
 }

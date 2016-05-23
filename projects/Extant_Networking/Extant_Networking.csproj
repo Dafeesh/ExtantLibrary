@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientConnection.cs" />
+    <Compile Include="DualSocketConnection.cs" />
     <Compile Include="Hosting\HostingConnection.cs" />
     <Compile Include="Hosting\IncomingConnection.cs" />
     <Compile Include="Hosting\NetHost.cs" />

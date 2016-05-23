@@ -12,7 +12,7 @@ using Extant.Logging;
 
 namespace Extant.Net
 {
-    public class ClientConnection : INetConnection, IDebugLogging
+    public class DualSocketConnection : INetConnection, IDebugLogging
     {
         private TcpConnection _tcpConnection;
         private UdpConnection _udpConnection;
@@ -21,7 +21,7 @@ namespace Extant.Net
 
         private DebugLogger _log;
 
-        private ClientConnection(TcpConnection tcpCon, UdpConnection udpCon)
+        private DualSocketConnection(TcpConnection tcpCon, UdpConnection udpCon)
         {
             this._tcpConnection = tcpCon;
             this._udpConnection = udpCon;
@@ -119,7 +119,7 @@ namespace Extant.Net
 
         public class ConnectionProcess
         {
-            public ClientConnection ClientConnection { get; private set; }
+            public DualSocketConnection ClientConnection { get; private set; }
             public Step ConnectionStep { get; private set; }
             public bool IsDone { get; private set; }
 
@@ -198,7 +198,7 @@ namespace Extant.Net
                                 ConnectionStep = Step.Connected;
 
                                 ClientConnection =
-                                    new ClientConnection(
+                                    new DualSocketConnection(
                                         new TcpConnection(tcpClient, _decryptor),
                                         new UdpConnection(udpClient, _decryptor));
                             }
