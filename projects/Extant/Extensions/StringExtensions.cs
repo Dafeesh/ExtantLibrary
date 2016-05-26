@@ -15,15 +15,13 @@ namespace Extant.Extensions
             return string.IsNullOrEmpty(value.Trim());
         }
 
-        public static string ToAggregateString(this IEnumerable<object> arr, bool withNewlines = true)
+        public static string ToAggregateString<T>(this IEnumerable<T> ienum, string separator = "\n", bool trailingSeparator = true)
         {
             StringBuilder str = new StringBuilder();
-            foreach (object o in arr)
+            T[] arr = ienum.ToArray();
+            for (int i = 0; i < arr.Length; i++)
             {
-                if (withNewlines)
-                    str.AppendLine(o.ToString());
-                else
-                    str.Append(o.ToString());
+                str.Append(arr[i].ToString() + ((i + 1 < arr.Length || trailingSeparator) ? separator : ""));
             }
             return str.ToString();
         }
