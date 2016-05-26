@@ -18,7 +18,7 @@ namespace Extant.Unity.Component
 
         private DebugLogger _log = null;
         private DebugPostingScope _logPostScope = DebugPostingScope.None;
-        
+
         /// <summary>
         /// Called once one frame after the component is created. Called before OnEnable() and Start().
         /// </summary>
@@ -39,6 +39,16 @@ namespace Extant.Unity.Component
         {
             OnTerminate();
             DebugPosting = DebugPostingScope.None;
+        }
+
+        protected void LocalAssert(bool test, string ifFailed, bool disableIfFailed = false)
+        {
+            if (!test)
+            {
+                Log.LogError("[ASSERT]: " + ifFailed);
+                if (disableIfFailed)
+                    this.enabled = false;
+            }
         }
 
         ////////////////////

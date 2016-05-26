@@ -39,10 +39,5 @@ namespace Extant.Unity.Component
                 return _instance.TypedTarget;
             }
         }
-
-        protected new void Awake()
-        {
-
-        }
     }
 }
