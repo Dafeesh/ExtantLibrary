@@ -5,8 +5,8 @@ using System.Linq;
 
 namespace Extant.Event
 {
-    public interface ISharedEventSubscriber
+    public interface IListeningForEvents
     {
-        bool IsReceivingSharedEvents { get; }
+        bool CanReceiveEvents { get; }
     }
 }

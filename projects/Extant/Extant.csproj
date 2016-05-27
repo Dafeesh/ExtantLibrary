@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="Collections\ListTable.cs" />
     <Compile Include="Collections\CacheList.cs" />
-    <Compile Include="Event\ISharedEventSubscriber.cs" />
+    <Compile Include="Event\IListeningForEvents.cs" />
     <Compile Include="Event\SharedEvent.cs" />
     <Compile Include="Event\WeakReference.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />

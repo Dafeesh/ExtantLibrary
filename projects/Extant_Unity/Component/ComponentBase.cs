@@ -5,7 +5,7 @@ using Extant.Event;
 
 namespace Extant.Unity.Component
 {
-    public class ComponentBase : MonoBehaviour, IDebugLogging, ISharedEventSubscriber
+    public class ComponentBase : MonoBehaviour, IDebugLogging, IListeningForEvents
     {
         [System.Flags]
         public enum DebugPostingScope
@@ -53,7 +53,7 @@ namespace Extant.Unity.Component
 
         ////////////////////
 
-        public bool IsReceivingSharedEvents
+        public bool CanReceiveEvents
         {
             get
             {

@@ -10,10 +10,10 @@ namespace Extant.Event
     public class SharedEvent<TArgs>
     {
         object _lock = new object();
-        Dictionary<WeakReference<ISharedEventSubscriber>, SharedEventHandler<TArgs>> _subscribers = new Dictionary<WeakReference<ISharedEventSubscriber>, SharedEventHandler<TArgs>>();
-        Dictionary<WeakReference<ISharedEventSubscriber>, SharedEventHandler<TArgs>> _subscribersLate = new Dictionary<WeakReference<ISharedEventSubscriber>, SharedEventHandler<TArgs>>();
+        Dictionary<WeakReference<IListeningForEvents>, SharedEventHandler<TArgs>> _subscribers = new Dictionary<WeakReference<IListeningForEvents>, SharedEventHandler<TArgs>>();
+        Dictionary<WeakReference<IListeningForEvents>, SharedEventHandler<TArgs>> _subscribersLate = new Dictionary<WeakReference<IListeningForEvents>, SharedEventHandler<TArgs>>();
 
-        public void Raise(ISharedEventSubscriber sender, TArgs args)
+        public void Raise(IListeningForEvents sender, TArgs args)
         {
             lock (_lock)
             {
@@ -24,7 +24,7 @@ namespace Extant.Event
                     {
 
 
-                        if (kvp.Key.TypedTarget.IsReceivingSharedEvents)
+                        if (kvp.Key.TypedTarget.CanReceiveEvents)
                             kvp.Value(sender, args);
                         return false;
                     }
@@ -40,7 +40,7 @@ namespace Extant.Event
                 {
                     if (kvp.Key.IsAlive)
                     {
-                        if (kvp.Key.TypedTarget.IsReceivingSharedEvents)
+                        if (kvp.Key.TypedTarget.CanReceiveEvents)
                             kvp.Value(sender, args);
                         return false;
                     }
@@ -53,7 +53,7 @@ namespace Extant.Event
             }
         }
 
-        public void Subscribe(ISharedEventSubscriber subscriber, SharedEventHandler<TArgs> toCall, bool isLate = false)
+        public void Subscribe(IListeningForEvents subscriber, SharedEventHandler<TArgs> toCall, bool isLate = false)
         {
             if (Object.ReferenceEquals(subscriber, null) || Object.ReferenceEquals(toCall, null))
                 throw new ArgumentException("Subscriber and toCall cannot be null.");
@@ -61,9 +61,9 @@ namespace Extant.Event
             lock (_lock)
             {
                 if (isLate)
-                    _subscribersLate.Add(new WeakReference<ISharedEventSubscriber>(subscriber), toCall);
+                    _subscribersLate.Add(new WeakReference<IListeningForEvents>(subscriber), toCall);
                 else
-                    _subscribers.Add(new WeakReference<ISharedEventSubscriber>(subscriber), toCall);
+                    _subscribers.Add(new WeakReference<IListeningForEvents>(subscriber), toCall);
             }
         }
 
