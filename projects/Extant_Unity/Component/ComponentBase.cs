@@ -1,11 +1,12 @@
 using UnityEngine;
+using System.Collections;
 
 using Extant.Logging;
 using Extant.Event;
 
 namespace Extant.Unity.Component
 {
-    public class ComponentBase : MonoBehaviour, IDebugLogging, IListeningForEvents
+    public abstract class ComponentBase : MonoBehaviour, IDebugLogging, IListeningForEvents
     {
         [System.Flags]
         public enum DebugPostingScope
@@ -49,6 +50,33 @@ namespace Extant.Unity.Component
                 if (disableIfFailed)
                     this.enabled = false;
             }
+        }
+
+        protected void StartContinuousCoroutine(System.Action func, float delay = 0f)
+        {
+            StartCoroutine(RunContinuousCoroutine(func, delay));
+        }
+
+        private IEnumerator RunContinuousCoroutine(System.Action func, float delay)
+        {
+            WaitForSeconds wait = new WaitForSeconds(delay > 0f ? delay : 0f);
+            while (true)
+            {
+                yield return wait;
+                func.Invoke();
+            }
+        }
+
+        protected void StartActionAfter(System.Action func, float runAfterDelay)
+        {
+            StartCoroutine(RunActionAfter(func, runAfterDelay));
+        }
+
+        private IEnumerator RunActionAfter(System.Action func, float runAfterDelay)
+        {
+            yield return new WaitForSeconds(runAfterDelay);
+            func.Invoke();
+            yield return null;
         }
 
         ////////////////////

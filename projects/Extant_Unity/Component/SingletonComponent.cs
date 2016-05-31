@@ -24,7 +24,8 @@ namespace Extant.Unity.Component
                     if (instances.Length == 0)
                     {
                         Debug.LogError("Signleton not found. An instance of " + typeof(T) +
-                           " is needed in the scene, but there is none.");
+                           " is needed in the scene, but there is none. " +
+                           "Did you call for a Global during Initialization/Awake? Use Start instead.");
                         return null;
                     }
                     else if (instances.Length >= 2)

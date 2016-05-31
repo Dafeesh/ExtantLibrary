@@ -48,6 +48,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\ResourceBank.cs" />
+    <Compile Include="Caching\ObjectLifePair.cs" />
     <Compile Include="Component\ComponentBase.cs" />
     <Compile Include="Component\SingletonComponent.cs" />
     <Compile Include="Float2Conversions.cs" />
