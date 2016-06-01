@@ -1,0 +1,15 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+using Extant;
+using Extant.Unity;
+using Extant.Unity.Component;
+
+public class #SCRIPTNAME# : ComponentBase
+{
+    protected override void OnInitialize()
+    {
+        
+    }
+}
