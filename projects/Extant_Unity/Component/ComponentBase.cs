@@ -67,7 +67,7 @@ namespace Extant.Unity.Component
             }
         }
 
-        protected void StartActionAfter(System.Action func, float runAfterDelay)
+        protected void Invoke(System.Action func, float runAfterDelay)
         {
             StartCoroutine(RunActionAfter(func, runAfterDelay));
         }
