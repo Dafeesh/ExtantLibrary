@@ -35,5 +35,18 @@ namespace ExtantTests.Extensions
             Assert.IsTrue(noTrail.Equals(expectedNoTrail), "Without trail failed.");
             Assert.IsTrue(withTrail.Equals(expectedWithTrail), "With trail failed.");
         }
+
+        [TestMethod]
+        public void String_ProcessBackspaces()
+        {
+            string str_correct = "Hello There";
+            string str_dirty = "Hee\bllo \b Thereeee\b\b\b";
+            char backspace = '\b';
+            string str_cleaned = str_dirty.ProcessBackspaces(backspace);
+
+            bool isEqual = str_correct.Equals(str_cleaned);
+
+            Assert.IsTrue(isEqual, "Backspaces were not properly processes in string: [" + str_dirty + "] -> [" + str_cleaned + "]");
+        }
     }
 }
