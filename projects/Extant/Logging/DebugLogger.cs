@@ -10,6 +10,11 @@ namespace Extant.Logging
     /// </summary>
     public class DebugLogger : IDebugLogger
     {
+        private static DebugLogger _global = new DebugLogger("GLOBAL");
+        public static IDebugLogger Global { get { return _global; } }
+
+        /////////////////////////
+
         public event LoggerLoggedHandler Logged;
         public event LoggerLoggedHandler MessageLogged;
         public event LoggerLoggedHandler WarningLogged;
@@ -65,6 +70,8 @@ namespace Extant.Logging
 
             if (_linkedLog != null)
                 _linkedLog.LogItem(new LogItem(li, _linkedLog));
+
+            Global.LogItem(li);
         }
 
         public void LogMessage(string s)
