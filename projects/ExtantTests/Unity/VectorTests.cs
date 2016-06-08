@@ -14,6 +14,17 @@ namespace ExtantTests.Unity
     [TestClass]
     public class VectorTests
     {
+        [TestMethod]
+        public void Vector3_AsEquals()
+        {
+            Vector3 vec = new Vector3(1, 2, 3);
+            Vector3 vecZero = new Vector3(0, 0, 0);
+            Vector3 vecEquiv = vecZero.AsXEquals(1).AsYEquals(2).AsZEquals(3);
+
+            bool vecEqualsEquiv = vec.Equals(vecEquiv);
+
+            Assert.IsTrue(vecEqualsEquiv, vec.ToString() + " == " + vecEquiv.ToString());
+        }
 
         [TestMethod]
         public void Float2_Conversions()

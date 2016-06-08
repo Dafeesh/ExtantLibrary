@@ -10,6 +10,7 @@ namespace Extant
     {
         public static readonly float2 Zero = new float2(0, 0);
         public static readonly float2 Epsilon = new float2(float.Epsilon, float.Epsilon);
+        public static readonly float2 MinValue = new float2(float.MinValue, float.MinValue);
         public static readonly float2 MaxValue = new float2(float.MaxValue, float.MaxValue);
 
         [XmlElement("X"), ProtoMember(1)]
@@ -77,15 +78,10 @@ namespace Extant
             return (float)Math.Sqrt(this.x * this.x + this.y * this.y);
         }
 
-        public float2 Normal()
+        public float2 Normalized()
         {
             float mag = this.Magnitude();
             return new float2(this.x / mag, this.y / mag);
-        }
-
-        public float2 Inverse()
-        {
-            return new float2(-this.x, -this.y);
         }
 
         public float DistanceTo(float2 otherPoint)
@@ -98,7 +94,7 @@ namespace Extant
             if (!overStep && dist >= this.DistanceTo(other))
                 return other;
             else
-                return this + ((other - this).Normal() * dist);
+                return this + ((other - this).Normalized() * dist);
         }
 
         public bool WithinArea(float minX, float minY, float maxX, float maxY)
