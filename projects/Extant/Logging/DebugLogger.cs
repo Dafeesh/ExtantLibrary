@@ -10,8 +10,8 @@ namespace Extant.Logging
     /// </summary>
     public class DebugLogger : IDebugLogger
     {
-        private static DebugLogger _global = new DebugLogger("GLOBAL");
-        public static IDebugLogger Global { get { return _global; } }
+        public static event LoggerLoggedHandler AnyLogged;
+        private static object _anyLogged_lock = new object();
 
         /////////////////////////
 
@@ -71,7 +71,12 @@ namespace Extant.Logging
             if (_linkedLog != null)
                 _linkedLog.LogItem(new LogItem(li, _linkedLog));
 
-            Global.LogItem(li);
+            lock (_anyLogged_lock)
+            {
+                var eventFull = AnyLogged;
+                if (eventFull != null)
+                    eventFull.Invoke(li.ToString());
+            }
         }
 
         public void LogMessage(string s)
