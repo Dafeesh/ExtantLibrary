@@ -43,19 +43,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\ListTable.cs" />
-    <Compile Include="Collections\CacheList.cs" />
     <Compile Include="Event\IListeningForEvents.cs" />
     <Compile Include="Event\SharedEvent.cs" />
     <Compile Include="Event\WeakReference.cs" />
+    <Compile Include="Extensions\MemoryStreamExtensions.cs" />
+    <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\EnumerationExtensions.cs" />
     <Compile Include="Extensions\NumberExtentions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Logging\ByteRecord.cs" />
     <Compile Include="Logging\DebugLogger.cs" />
-    <Compile Include="Logging\IDebugLogger.cs" />
-    <Compile Include="Logging\IDebugLogging.cs" />
     <Compile Include="Logging\LogItem.cs" />
+    <Compile Include="Util\LongTally.cs" />
     <Compile Include="Util\MathHelp.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="float2.cs" />

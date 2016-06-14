@@ -7,51 +7,58 @@ using Extant.Util;
 
 namespace Extant.Logging
 {
+    public interface IByteRecord
+    {
+        ILongTally InboundBytes { get; }
+        ILongTally OutboundBytes { get; }
+    }
+
+    public interface IByteRecording
+    {
+        IByteRecord ByteRecord { get; }
+    }
+
     /// <summary>
     /// Used to record byte usage and returns analytics about the data.
     /// </summary>
-    public class ByteRecord
+    public class ByteRecorder : IByteRecord
     {
-        private SimpleTimer elapsed;
-        private int bytes;
-        private int bytes_last; //Used to signify the last record of total bytes to calculate BPS.
-        private float kiloBytesPerSecond;
+        private LongTally _inboundBytes;
+        private LongTally _outboundBytes;
 
-        public ByteRecord(int b = 0)
+        public ByteRecorder()
+            : this(0, 0)
+        { }
+
+        public ByteRecorder(long initialInboundCount, long initialOutboundCount)
         {
-            elapsed = SimpleTimer.StartNew();
-
-            bytes = b;
-            bytes_last = bytes;
-            kiloBytesPerSecond = 0;
+            this._inboundBytes = new LongTally(initialInboundCount);
+            this._outboundBytes = new LongTally(initialOutboundCount);
         }
 
-        public int Bytes
+        public long AddInboundBytes(long amount)
         {
-            set
-            {
-                bytes = value;
-            }
-
-            get
-            {
-                return bytes;
-            }
+            return _inboundBytes.Add(amount);
         }
 
-        public float KiloBytesPerSecond
+        public long AddOutboundBytes(long amount)
+        {
+            return _outboundBytes.Add(amount);
+        }
+
+        public ILongTally InboundBytes
         {
             get
             {
-                if (elapsed.ElapsedMilliseconds > 1000)
-                {
-                    kiloBytesPerSecond = ((bytes - bytes_last) / 1024.0f) / (elapsed.ElapsedMilliseconds * 1000.0f);
+                return _inboundBytes;
+            }
+        }
 
-                    bytes_last = bytes;
-                    elapsed.Reset();
-                    elapsed.Start();
-                }
-                return kiloBytesPerSecond;
+        public ILongTally OutboundBytes
+        {
+            get
+            {
+                return _outboundBytes;
             }
         }
     }

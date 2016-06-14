@@ -5,6 +5,35 @@ using System.Diagnostics;
 
 namespace Extant.Logging
 {
+    public delegate void LoggerLoggedHandler(string str);
+
+    public interface IDebugLogger
+    {
+        event LoggerLoggedHandler Logged;
+        event LoggerLoggedHandler MessageLogged;
+        event LoggerLoggedHandler WarningLogged;
+        event LoggerLoggedHandler ErrorLogged;
+
+        void LogItem(LogItem item);
+        void LogMessage(string str);
+        void LogWarning(string str);
+        void LogError(string str);
+
+        LogItem[] GetLines(int numLines);
+
+        bool IsPostingToConsole { get; set; }
+        string SourceName { get; }
+        IDebugLogger LinkedLogger { get; set; }
+    }
+
+    public interface IDebugLogging
+    {
+        IDebugLogger Log
+        {
+            get;
+        }
+    }
+
     /// <summary>
     /// Thread-safe class for saving debugging logs.
     /// </summary>

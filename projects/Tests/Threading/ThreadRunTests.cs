@@ -12,15 +12,20 @@ namespace ExtantTests.Threading
     [TestClass]
     public class ThreadRunTests
     {
-        public class TestThreadRun : ThreadRun
+        class TestThreadRun : ThreadRun
         {
             public int SomeNumber = 0;
 
             public TestThreadRun()
                 : base("ExampleName")
             {
-                this.RegisterTickCall(Tick, ThreadRun.UncappedTicksPerSecond);
+                RegisterTickCall(Tick, TimeSpan.Zero);
             }
+
+            protected override void OnBegin()
+            { }
+            protected override void OnFinish(Exception unhandledException = null)
+            { }
 
             private void Tick()
             {
@@ -40,10 +45,9 @@ namespace ExtantTests.Threading
             Assert.AreEqual(true, invokeAction.WaitForResult(), "Failed to run invoke action.");
             Assert.AreNotEqual(0, thr.SomeNumber, "OnTick was not called before first invoke.");
 
-            thr.Stop(new ThreadStopResult(ThreadStopType.Success, ThreadStopSource.Parent), true);
+            thr.Stop(true);
 
             Assert.AreEqual(thr.IsStopped, true, "Thread did not stop.");
-            Assert.AreEqual(thr.StopResult.Source, ThreadStopSource.Parent, "Different StopReason value after stopping.");
         }
     }
 }

@@ -18,5 +18,14 @@ namespace Extant.Threading
             this.Lock = new object();
             this.Value = value;
         }
+
+        ////Doesn't feel right... Maybe come back to this..
+        //public void SafelyRun(Action<TValue> a)
+        //{
+        //    lock (Lock)
+        //    {
+        //        a.Invoke(Value);
+        //    }
+        //}
     }
 }

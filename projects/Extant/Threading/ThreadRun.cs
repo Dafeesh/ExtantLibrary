@@ -26,47 +26,64 @@ using System.Collections.Generic;
 using System.Threading;
 
 using Extant.Util;
+using Extant.Extensions;
 
 namespace Extant.Threading
 {
-    //Base class used as a framework for classes that will run on a separate
-    //thread. When inheritted, the inheritting class must override a RunLoop method
-    //that will be called until requested to stop.
+    //Base class used as a framework for classes that will run on its own thread.
     public abstract class ThreadRun
     {
-        public const Int32 UncappedTicksPerSecond = int.MaxValue;
+        private static readonly NotSupportedException InvokeNotSupportedException
+            = new NotSupportedException("This object is marked as not invokable.");
 
         private String _name;
-        private LockValuePair<Thread> _thisThread;
+        private Thread _thisThread;
+        private bool _isInvokable;
 
+        private List<TickCall> _tickCalls = new List<TickCall>();
         private Boolean _hasStarted = false;
+        private Boolean _isStopping = false;
         private Boolean _isStopped = false;
-        private ThreadStopResult _stopResult = null;
         private Exception _unhandledException = null;
 
-        private Dictionary<Action, TimeoutTimer> _tickTimers = new Dictionary<Action, TimeoutTimer>();
-        private LockValuePair<Queue<IThreadInvokable>> _invokedFunctions = new LockValuePair<Queue<IThreadInvokable>>(new Queue<IThreadInvokable>());
+        private object _invokedLock = new object();
+        private Queue<Action> _invokedActions = new Queue<Action>();
+        private Queue<IThreadInvokable> _invokedFunctions = new Queue<IThreadInvokable>();
 
         /// <summary>
         /// Creates an object for a thread to own and run an inheritted class.
         /// </summary>
         /// <param name="threadName">Name of the thread.</param>
-        /// <param name="actionTicksPerSecondPairs">An action and how many times to call each second.</param>
-        protected ThreadRun(String threadName)
+        /// <param name="tickCalls">An array of actions with how how often they should be called each second.</param>
+        protected ThreadRun(String threadName, bool isInvokable = true)
         {
             if (string.IsNullOrEmpty(threadName))
                 throw new ArgumentException("ThreadName cannot be null or empty.");
 
             this._name = threadName;
-            this._thisThread = new LockValuePair<Thread>(
-                new Thread(new ThreadStart(Run))
-                { Name = "<" + threadName + ">" }
-            );
+            this._thisThread = new Thread(new ThreadStart(Run)) { Name = "<" + threadName + ">" };
+            this._isInvokable = isInvokable;
         }
 
         ~ThreadRun()
         {
-            this.Stop(new ThreadStopResult(ThreadStopType.Success, ThreadStopSource.GarbageCollection), true);
+            this.Stop(true);
+        }
+
+        protected abstract void OnBegin();
+        protected abstract void OnFinish(Exception unhandledException = null);
+
+        /// <summary>
+        /// Used to register an action to be called so many times per second on this thread.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="callsPerSecond"></param>
+        protected void RegisterTickCall(Action action, TimeSpan timeBetweenCalls)
+        {
+            if (action == null)
+                throw new ArgumentException("Action cannot be null.");
+
+            _tickCalls.Add(new TickCall(action, timeBetweenCalls));
         }
 
         /// <summary>
@@ -74,77 +91,67 @@ namespace Extant.Threading
         /// </summary>
         private void Run()
         {
-            OnBegin();
-
-            ToggleTickTimers(true);
-            long timeUntilNextTick = 0;
-
-            while (!IsStopped)
+            try
             {
-                try
-                {
-                    HandleTicks(out timeUntilNextTick);
-                    if (this.IsStopped)
-                        break;
+                OnBegin();
 
-                    HandleInvokedFunctions();
-                    if (this.IsStopped)
-                        break;
+                long timeUntilNextTick = 0;
+                while (!_isStopping)
+                {
+                    HandleTickCalls(out timeUntilNextTick);
+                    if (_isInvokable)
+                        HandleInvoked();
 
                     //Sleep until the next tick
                     Thread.Sleep((int)timeUntilNextTick);
                 }
-                catch (Exception e)
-                {
-                    this._unhandledException = e;
-                    this.Stop(new ThreadStopResult(ThreadStopType.UnhandledException, ThreadStopSource.Self));
-                }
+            }
+            catch (Exception e)
+            {
+                _unhandledException = e;
+                this.Stop();
             }
 
-            ToggleTickTimers(false);
-
-            OnFinish(_unhandledException == null);
+            OnFinish(_unhandledException);
+            _isStopped = true;
         }
 
         /// <summary>
         /// Handles the timing and calls of all ticks.
         /// </summary>
-        /// Returns false if the thread has been stopped during tick calls.
-        /// <returns></returns>
-        void HandleTicks(out long timeUntilNextTick)
+        void HandleTickCalls(out long timeUntilNextTick)
         {
             timeUntilNextTick = int.MaxValue;
-            foreach (var tickTimer in _tickTimers)
+            foreach (var call in _tickCalls)
             {
-                if (tickTimer.Value.IsTimedOut)
+                if (call.IsReady)
                 {
-                    lock (_thisThread.Lock)
-                    {
-                        tickTimer.Key();
-                    }
-                    tickTimer.Value.Restart();
-
-                    if (this.IsStopped)
-                        return;
+                    call.ActionCall.Invoke();
+                    call.RestartCallTimer();
                 }
 
-                if (timeUntilNextTick > tickTimer.Value.RemainingMilliseconds)
-                    timeUntilNextTick = tickTimer.Value.RemainingMilliseconds;
+                if (call.RemainingMilliseconds < timeUntilNextTick)
+                    timeUntilNextTick = call.RemainingMilliseconds;
             }
         }
 
         /// <summary>
         /// Call all invoked functions in the queue.
         /// </summary>
-        private void HandleInvokedFunctions()
+        private void HandleInvoked()
         {
-            lock (_invokedFunctions.Lock)
+            lock (_invokedLock)
             {
-                IThreadInvokable invokedFunction;
-                while (_invokedFunctions.Value.Count > 0)
+                while (_invokedFunctions.HasNext())
                 {
-                    invokedFunction = _invokedFunctions.Value.Dequeue();
-                    invokedFunction.Run();
+                    _invokedFunctions.Dequeue().Run();
+                    if (this.IsStopped)
+                        break;
+                }
+
+                while (_invokedActions.HasNext())
+                {
+                    _invokedActions.Dequeue().Invoke();
                     if (this.IsStopped)
                         break;
                 }
@@ -152,90 +159,73 @@ namespace Extant.Threading
         }
 
         /// <summary>
-        /// Toggles if timers should be running or not.
-        /// </summary>
-        private void ToggleTickTimers(bool toggleRunning)
-        {
-            foreach (var tickTimer in _tickTimers)
-            {
-                if (tickTimer.Value.IsRunning != toggleRunning)
-                    if (toggleRunning)
-                        tickTimer.Value.Start();
-                    else
-                        tickTimer.Value.Stop();
-            }
-        }
-
-        /// <summary>
-        /// Adds a tick function to be called so many times every second.
-        /// </summary>
-        protected void RegisterTickCall(Action tickFunction, int callsPerSecond)
-        {
-            if (tickFunction == null)
-                throw new ArgumentException("Tick function cannot be null.");
-            if (callsPerSecond <= 0)
-                throw new ArgumentException("Ticks per second must be greater than zero or equal to 'UncappedTicksPerSecond'.");
-
-            _tickTimers.Add(tickFunction,
-                new TimeoutTimer(TimeSpan.FromMilliseconds(1000 / callsPerSecond)));
-        }
-
-        #region Object events
-
-        /// <summary>
-        /// Called when thread instructed to start.
-        /// Called before any tick.
-        /// </summary>
-        protected virtual void OnBegin() { }
-
-        /// <summary>
-        /// Called when thread is finished, fails via instruction, or unhandled exception.
-        /// Called after all ticks.
-        /// </summary>
-        /// <param name="finishedWithoutError">The thread finished properly.</param>
-        protected virtual void OnFinish(bool finishedWithoutError) { }
-
-        #endregion Object events
-
-        /// <summary>
         /// Starts the thread controlling this object.
         /// </summary>
         public void Start()
         {
-            if (HasStarted)
+            if (this.HasStarted)
                 throw new InvalidOperationException("This ThreadRun has already been started!");
 
-            _thisThread.Value.Start();
+            _thisThread.Start();
             _hasStarted = true;
         }
 
         /// <summary>
         /// Instructs the thread to stop.
         /// </summary>
-        public void Stop(ThreadStopResult reason, bool blockWhileStopping = false)
+        public void Stop(bool blockWhileStopping = false)
         {
-            if (!IsStopped)
+            if (!_isStopping && !_isStopped)
             {
-                _isStopped = true;
-                _stopResult = reason;
+                _isStopping = true;
 
-                if (blockWhileStopping)
-                {
-                    if (_thisThread.Value.IsAlive && Thread.CurrentThread.ManagedThreadId != _thisThread.Value.ManagedThreadId)
-                        _thisThread.Value.Join();
-                }
+                if (blockWhileStopping && !CurrentlyRunningInThisThread)
+                    while (!_isStopped)
+                        Thread.Sleep(0);
             }
         }
 
         /// <summary>
-        /// Adds a Task to be executed during this object's main thread.
+        /// Adds a task to be executed during this object's main thread.
         /// </summary>
-        /// <param name="func">ThreadTask to be run on this object's main thread.</param>
+        /// <param name="func">Task to be run on this object's main thread.</param>
         public void Invoke(IThreadInvokable func)
         {
-            lock (_invokedFunctions.Lock)
+            if (!_isInvokable)
+                throw InvokeNotSupportedException;
+            lock (_invokedLock)
             {
-                _invokedFunctions.Value.Enqueue(func);
+                _invokedFunctions.Enqueue(func);
+            }
+        }
+
+        /// <summary>
+        /// Adds a task to be executed during this object's main thread.
+        /// </summary>
+        /// <param name="action">Task to be run on this object's main thread.</param>
+        public void Invoke(Action action)
+        {
+            if (!_isInvokable)
+                throw InvokeNotSupportedException;
+            lock (_invokedLock)
+            {
+                _invokedActions.Enqueue(action);
+            }
+        }
+
+        protected bool CurrentlyRunningInThisThread
+        {
+            get
+            {
+                return Thread.CurrentThread.ManagedThreadId == _thisThread.ManagedThreadId;
+            }
+        }
+
+        public bool IsInvokable
+        {
+            get
+            {
+                return _isInvokable;
             }
         }
 
@@ -255,19 +245,11 @@ namespace Extant.Threading
             }
         }
 
-        public ThreadStopResult StopResult
-        {
-            get
-            {
-                return _stopResult;
-            }
-        }
-
         public Int32 ManagedThreadId
         {
             get
             {
-                return _thisThread.Value.ManagedThreadId;
+                return _thisThread.ManagedThreadId;
             }
         }
 
@@ -276,6 +258,40 @@ namespace Extant.Threading
             get
             {
                 return _unhandledException;
+            }
+        }
+
+        internal class TickCall
+        {
+            public Action ActionCall { get; private set; }
+
+            private TimeoutTimer _timer;
+
+            public TickCall(Action action, TimeSpan timeBetweenCalls)
+            {
+                this.ActionCall = action;
+                this._timer = TimeoutTimer.StartNew(timeBetweenCalls);
+            }
+
+            public void RestartCallTimer()
+            {
+                _timer.Restart();
+            }
+
+            public bool IsReady
+            {
+                get
+                {
+                    return _timer.IsTimedOut;
+                }
+            }
+
+            public long RemainingMilliseconds
+            {
+                get
+                {
+                    return _timer.RemainingMilliseconds;
+                }
             }
         }
     }

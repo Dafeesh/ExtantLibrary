@@ -45,5 +45,15 @@ namespace Extant.Extensions
             }
             return s;
         }
+
+        public static string ToHexString(this byte[] bytes, string separator = " ")
+        {
+            if (bytes == null)
+                throw new NullReferenceException();
+            if (separator == null)
+                throw new ArgumentNullException();
+
+            return BitConverter.ToString(bytes).Replace("-", separator);
+        }
     }
 }

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtantTests", "ExtantTests\ExtantTests.csproj", "{445F7AB4-C4C0-435C-9D61-A34878251926}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtantTests", "Tests\ExtantTests.csproj", "{445F7AB4-C4C0-435C-9D61-A34878251926}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B2DE4F5F-00E3-4A84-83EF-2BDBA516539C} = {B2DE4F5F-00E3-4A84-83EF-2BDBA516539C}
 	EndProjectSection
@@ -13,6 +13,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extant_Unity", "Extant_Unity\Extant_Unity.csproj", "{04068741-5919-4DE5-A9FE-0BCB475D61EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extant_Networking", "Extant_Networking\Extant_Networking.csproj", "{B2DE4F5F-00E3-4A84-83EF-2BDBA516539C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtantManualDebugging", "ManualDebugging\ExtantManualDebugging.csproj", "{D601C233-1D13-4F49-AEB6-D2C50B6D2C75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +38,10 @@ Global
 		{B2DE4F5F-00E3-4A84-83EF-2BDBA516539C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2DE4F5F-00E3-4A84-83EF-2BDBA516539C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2DE4F5F-00E3-4A84-83EF-2BDBA516539C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D601C233-1D13-4F49-AEB6-D2C50B6D2C75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D601C233-1D13-4F49-AEB6-D2C50B6D2C75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D601C233-1D13-4F49-AEB6-D2C50B6D2C75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D601C233-1D13-4F49-AEB6-D2C50B6D2C75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

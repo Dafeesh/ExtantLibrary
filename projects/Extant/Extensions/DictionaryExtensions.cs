@@ -22,5 +22,13 @@ namespace Extant.Extensions
                 dictionary.SetOrAdd(kvp.Key, kvp.Value);
             }
         }
+
+        public static TValue GetOrAddNew<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> ifNotExist)
+        {
+            if (!dictionary.ContainsKey(key))
+                dictionary.Add(key, ifNotExist.Invoke());
+
+            return dictionary[key];
+        }
     }
 }

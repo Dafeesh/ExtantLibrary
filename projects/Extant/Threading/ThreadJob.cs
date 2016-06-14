@@ -9,10 +9,11 @@ namespace Extant.Threading
     public interface IThreadJob<out TResult>
     {
         void Start();
-        void Wait();
+        void Join();
         void Abort();
+        TResult Result();
         bool IsRunning { get; }
-        TResult Result { get; }
+        Exception UnhandledException { get; }
     }
 
     public interface IThreadJob : IThreadJob<bool>
@@ -23,6 +24,8 @@ namespace Extant.Threading
     /// </summary>
     public class ThreadJob<TResult> : IThreadJob<TResult>
     {
+        public Exception UnhandledException { get; private set; }
+
         private Func<TResult> _func;
         private Thread _thread;
         private bool _hasBeenStarted = false;
@@ -34,13 +37,13 @@ namespace Extant.Threading
             this._func = func;
             this._result = default(TResult);
             this._thread = new Thread(new ThreadStart(_Run));
+            this.UnhandledException = null;
         }
 
         public static ThreadJob<TResult> StartNew(Func<TResult> func)
         {
             ThreadJob<TResult> job = new ThreadJob<TResult>(func);
             job.Start();
-
             return job;
         }
 
@@ -52,6 +55,10 @@ namespace Extant.Threading
             }
             catch (ThreadAbortException)
             { }
+            catch (Exception e)
+            {
+                this.UnhandledException = e;
+            }
             finally
             {
                 _isRunning = false;
@@ -68,7 +75,7 @@ namespace Extant.Threading
             _thread.Start();
         }
 
-        public void Wait()
+        public void Join()
         {
             if (!_hasBeenStarted)
                 throw new InvalidOperationException("ThreadJob has not been started.");
@@ -85,6 +92,12 @@ namespace Extant.Threading
                 _thread.Abort();
         }
 
+        public TResult Result()
+        {
+            Join();
+            return _result;
+        }
+
         public bool IsRunning
         {
             get
@@ -93,12 +106,11 @@ namespace Extant.Threading
             }
         }
 
-        public TResult Result
+        public bool HasUnhandledException
         {
             get
             {
-                Wait();
-                return _result;
+                return UnhandledException != null;
             }
         }
     }

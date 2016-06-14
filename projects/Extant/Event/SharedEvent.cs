@@ -37,16 +37,16 @@ namespace Extant.Event
 
                 //Trigger all subs flagged as late, remove null reference object
                 foreach (var toRemove in _subscribersLate.Where((kvp) =>
-                {
-                    if (kvp.Key.IsAlive)
                     {
-                        if (kvp.Key.TypedTarget.CanReceiveEvents)
-                            kvp.Value(sender, args);
-                        return false;
-                    }
-                    else
-                        return true;
-                }).ToArray())
+                        if (kvp.Key.IsAlive)
+                        {
+                            if (kvp.Key.TypedTarget.CanReceiveEvents)
+                                kvp.Value(sender, args);
+                            return false;
+                        }
+                        else
+                            return true;
+                    }).ToArray())
                 {
                     _subscribers.Remove(toRemove.Key);
                 }

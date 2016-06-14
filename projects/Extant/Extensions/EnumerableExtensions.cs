@@ -8,7 +8,7 @@ namespace Extant.Extensions
 {
     public static class EnumerableExtensions
     {
-        public static ListTable<TKey, TValue> ToArrayTable<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> values)
+        public static ListTable<TKey, TValue> ToListTable<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> values)
         {
             ListTable<TKey, TValue> table = new ListTable<TKey, TValue>();
             foreach (var kvp in values)
@@ -16,6 +16,6 @@ namespace Extant.Extensions
                 table.AddOrSet(kvp.Key, kvp.Value);
             }
             return table;
-        } 
+        }
     }
 }

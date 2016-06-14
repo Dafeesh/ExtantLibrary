@@ -82,7 +82,7 @@ namespace Extant.Collections
             return count;
         }
 
-        public ICollection<TKey> Keys
+        public IEnumerable<TKey> Keys
         {
             get
             {
