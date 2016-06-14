@@ -78,6 +78,11 @@ namespace Extant
             return (float)Math.Sqrt(this.x * this.x + this.y * this.y);
         }
 
+        public float2 Reverse()
+        {
+            return new float2(-this.x, -this.y);
+        }
+
         public float2 Normalized()
         {
             float mag = this.Magnitude();

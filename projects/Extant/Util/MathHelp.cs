@@ -9,7 +9,7 @@ namespace Extant.Util
     {
         public static float2 ReflectionNormal(float2 inward, float2 normal)
         {
-            return inward.Inverse().Rotate((normal.ToDegrees() - inward.Inverse().ToDegrees()) * 2f);
+            return inward.Reverse().Rotate((normal.ToDegrees() - inward.Reverse().ToDegrees()) * 2f);
         }
     }
 }
